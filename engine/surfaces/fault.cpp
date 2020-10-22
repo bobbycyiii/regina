@@ -45,7 +45,32 @@ namespace regina {
     }
 
     bool NormalSurface::isEssentialSphere() const{
-        return false;
+        if (!(isConnected()
+              && isCompact()
+              && eulerChar() == 2))
+            return false;
+        Triangulation<3>* tri = cutAlong();
+        // By assumption, `this->triangulation()` has no sphere boundary components.
+        // So the only sphere boundary components of `tri` are the sides of `this`.
+        // We cone off these boundary components to undo a connect-sum along `this`.
+        tri->finiteToIdeal();
+
+        tri->intelligentSimplify();
+
+        if (tri->isConnected()){
+            delete tri;
+            return true;
+        }
+
+        tri->splitIntoComponents();
+        Triangulation<3>* L = static_cast<Triangulation<3>*>(tri->firstChild());
+        Triangulation<3>* R = static_cast<Triangulation<3>*>(L->nextSibling());
+        bool essential = !(L->isThreeSphere() || R->isThreeSphere());
+
+        delete L;
+        delete R;
+        delete tri;
+        return essential;
     }
 
     bool NormalSurface::isEssentialTorus() const{
