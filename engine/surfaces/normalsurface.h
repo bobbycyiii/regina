@@ -1453,6 +1453,7 @@ class REGINA_API NormalSurface : public ShortOutput<NormalSurface> {
          * Determines whether or not the given surface is an essential sphere.
          *
          * \pre The underlying triangulation has no sphere boundary components.
+         * \pre The underlying triangulation is connected.
          * \pre One can cut along this normal surface.
          */
            
@@ -1461,6 +1462,7 @@ class REGINA_API NormalSurface : public ShortOutput<NormalSurface> {
         /**
          * Determines whether or not the given surface is an essential torus.
          *
+         * \pre The underlying triangulation is connected. 
          * \pre One can cut along this normal surface.
          */
 
@@ -1470,7 +1472,8 @@ class REGINA_API NormalSurface : public ShortOutput<NormalSurface> {
          * Determines whether or not this surface is an annulus
          * cutting along which yields two solid tori.
          * (This is easier to check than whether or not the annulus is essential.)
-         * 
+         *
+         * \pre The underlying triangulation is connected.
          * \pre One can cut along this normal surface.
          */
         bool isSolidTorusAnnulus() const;
