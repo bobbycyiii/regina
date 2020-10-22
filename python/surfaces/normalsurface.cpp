@@ -118,6 +118,10 @@ void addNormalSurface(pybind11::module& m) {
         .def("isCompressingDisc", &NormalSurface::isCompressingDisc,
             pybind11::arg("knownConnected") = false)
         .def("isIncompressible", &NormalSurface::isIncompressible)
+        .def("separates", &NormalSurface::separates)
+        .def("isEssentialSphere", &NormalSurface::isEssentialSphere)
+        .def("isEssentialTorus", &NormalSurface::isEssentialTorus)
+        .def("isSolidTorusAnnulus", &NormalSurface::isSolidTorusAnnulus)
         .def("cutAlong", &NormalSurface::cutAlong)
         .def("crush", &NormalSurface::crush)
         .def("sameSurface", &NormalSurface::sameSurface)
