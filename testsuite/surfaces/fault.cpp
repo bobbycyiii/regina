@@ -38,11 +38,15 @@
 #include "triangulation/dim3.h"
 #include "triangulation/example3.h"
 #include "testsuite/dim3/testtriangulation.h"
+#include "triangulation/generic/triangulation.h"
 
 
 using regina::Example;
 using regina::NormalSurfaces;
 using regina::Triangulation;
+using regina::NormalListFlags;
+using regina::NS_VERTEX;
+using regina::NS_EMBEDDED_ONLY;
 
 class FaultTest : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(FaultTest);
@@ -193,7 +197,7 @@ public:
     Triangulation<3>* verifyHasEssentialSphere(Triangulation<3>* tri, 
             const std::string& triName){
         NormalSurfaces* s = NormalSurfaces::enumerate(
-            tri, regina::NS_STANDARD, regina::NS_EMBEDDED_ONLY);
+            tri, regina::NS_STANDARD, NS_EMBEDDED_ONLY);
         bool found_essential_sphere = false;
         for (unsigned i = 0; i < s->size(); ++i)
             if (s->surface(i)->isEssentialSphere()){
@@ -210,7 +214,8 @@ public:
     Triangulation<3>* verifyHasQVertexEssentialSphere(Triangulation<3>* tri, 
             const std::string& triName){
         NormalSurfaces* s = NormalSurfaces::enumerate(
-            tri, regina::NS_QUAD, static_cast<regina::NormalListFlags>(regina::NS_VERTEX & regina::NS_EMBEDDED_ONLY));
+            tri, regina::NS_QUAD,
+            static_cast<NormalListFlags>(NS_VERTEX & NS_EMBEDDED_ONLY));
         bool found_essential_sphere = false;
         for (unsigned i = 0; i < s->size(); ++i)
             if (s->surface(i)->isEssentialSphere()){
@@ -251,7 +256,8 @@ public:
         tri = Example<3>::cuspedGenusTwoTorus();
         tri->idealToFinite();
         tri->intelligentSimplify();
-        delete verifyAllFundamentalSpheresTrivial(tri, "Trivial I-bundle over genus two surface");
+        delete verifyAllFundamentalSpheresTrivial(
+            tri, "Trivial I-bundle over genus two surface");
         tri = Example<3>::figureEight();
         tri->idealToFinite();
         tri->intelligentSimplify();
@@ -277,8 +283,6 @@ public:
         while (p < 1000){
             tri = Example<3>::lst(p,q);
             delete verifyAllFundamentalSpheresTrivial(tri, "Solid torus");
-            tri = Example<3>::lens(p,q);
-            delete verifyAllFundamentalSpheresTrivial(tri, "Lens space");
             p = p + q;
             q = p - q;
         }
@@ -310,8 +314,129 @@ public:
         }
     }
 
+
+    Triangulation<3>* verifyAllFundamentalToriInessential(Triangulation<3>* tri, 
+            const std::string& triName){
+        NormalSurfaces* s = NormalSurfaces::enumerate(
+            tri, regina::NS_STANDARD, regina::NS_EMBEDDED_ONLY);
+        bool found_essential_torus = false;
+        for (unsigned i = 0; i < s->size(); ++i)
+            if (s->surface(i)->isEssentialTorus()){
+                found_essential_torus = true;
+                break;
+            }
+        delete s;
+        if (found_essential_torus)
+            CPPUNIT_FAIL(("The atoroidal manifold " + triName +
+                          " was computed to have an essential torus.").c_str());
+        return tri;
+    }
+
+    Triangulation<3>* verifyHasEssentialTorus(Triangulation<3>* tri, 
+            const std::string& triName){
+        NormalSurfaces* s = NormalSurfaces::enumerate(
+            tri, regina::NS_STANDARD, NS_EMBEDDED_ONLY);
+        bool found_essential_torus = false;
+        for (unsigned i = 0; i < s->size(); ++i)
+            if (s->surface(i)->isEssentialTorus()){
+                found_essential_torus = true;
+                break;
+            }
+        delete s;
+        if (!found_essential_torus)
+            CPPUNIT_FAIL(("No essential tori were found in the toroidal manifold " +
+                          triName + ".").c_str());
+        return tri;
+    }
+
+    Triangulation<3>* verifyHasQVertexEssentialTorus(Triangulation<3>* tri, 
+            const std::string& triName){
+        NormalSurfaces* s = NormalSurfaces::enumerate(
+            tri, regina::NS_QUAD,
+            static_cast<NormalListFlags>(NS_VERTEX & NS_EMBEDDED_ONLY));
+        bool found_essential_torus = false;
+        for (unsigned i = 0; i < s->size(); ++i)
+            if (s->surface(i)->isEssentialTorus()){
+                found_essential_torus = true;
+                break;
+            }
+        delete s;
+        if (!found_essential_torus)
+            CPPUNIT_FAIL(("No essential tori were found in the toroidal manifold " +
+                          triName + ".").c_str());
+        return tri;
+    }
+    
     void isEssentialTorus() {
-        CPPUNIT_FAIL("Not implemented yet");
+        Triangulation<3>* tri;
+
+        // Closed atoroidal manifolds
+        // Closed irreducible manifolds
+        tri = Example<3>::threeSphere();
+        delete verifyAllFundamentalSpheresTrivial(tri, "Minimal 3-sphere");
+        tri = Example<3>::simplicialSphere();
+        delete verifyAllFundamentalSpheresTrivial(tri, "Pentachoron boundary 3-sphere");
+        tri = Example<3>::poincareHomologySphere();
+        delete verifyAllFundamentalSpheresTrivial(tri, "Poincare homology sphere");
+        tri = Example<3>::weeks();
+        delete verifyAllFundamentalSpheresTrivial(tri, "Weeks-Matveev-Fomenko manifold");
+        int p = 3;
+        int q = 2;
+        while (p < 1000){
+            tri = Example<3>::lens(p,q);
+            delete verifyAllFundamentalSpheresTrivial(tri, "Fibonacci lens space");
+            p = p + q;
+            q = p - q;
+        }
+
+        // Bounded atoroidal manifolds
+        tri = Example<3>::ball();
+        delete verifyAllFundamentalSpheresTrivial(tri, "One tetrahedron ball");
+        tri = Example<3>::cuspedGenusTwoTorus();
+        tri->idealToFinite();
+        tri->intelligentSimplify();
+        delete verifyAllFundamentalSpheresTrivial(
+            tri, "Trivial I-bundle over genus two surface");
+        tri = Example<3>::figureEight();
+        tri->idealToFinite();
+        tri->intelligentSimplify();
+        delete verifyAllFundamentalSpheresTrivial(tri, "Figure eight knot exterior");
+        tri = Example<3>::trefoil();
+        tri->idealToFinite();
+        tri->intelligentSimplify();
+        delete verifyAllFundamentalSpheresTrivial(tri, "Trefoil knot exterior");
+        tri = Example<3>::whiteheadLink();
+        tri->idealToFinite();
+        tri->intelligentSimplify();
+        delete verifyAllFundamentalSpheresTrivial(tri, "Whitehead link exterior");
+        tri = Example<3>::gieseking();
+        tri->idealToFinite();
+        tri->intelligentSimplify();
+        delete verifyAllFundamentalSpheresTrivial(tri, "Gieseking manifold");
+        tri = Example<3>::solidKleinBottle();
+        tri->idealToFinite();
+        tri->intelligentSimplify();
+        delete verifyAllFundamentalSpheresTrivial(tri, "Solid Klein bottle");
+        p = 3;
+        q = 2;
+        while (p < 1000){
+            tri = Example<3>::lst(p,q);
+            delete verifyAllFundamentalSpheresTrivial(tri, "Solid torus");
+            p = p + q;
+            q = p - q;
+        }
+
+        // Toroidal manifolds require larger triangulations.
+        // To reduce testing time, we use quad-vertex surfaces.
+        tri = new Triangulation<3>("uLLvPAPAzzvQPQccdeghiihjjlmqspstrstthshgbvrndhakecbcqvndm");
+        tri->idealToFinite();
+        tri->intelligentSimplify();
+        delete verifyHasQVertexEssentialTorus(tri, "Doubled figure eight knot exterior");
+
+        tri = new Triangulation<3>("iLALzQcbccefhgghlpkkucjjs");
+        tri->idealToFinite();
+        tri->intelligentSimplify();
+        delete verifyHasQVertexEssentialTorus(tri, "Doubled trefoil knot exterior");
     }
 
     void isSolidTorusAnnulus() {
