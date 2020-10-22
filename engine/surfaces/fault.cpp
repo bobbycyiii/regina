@@ -30,7 +30,6 @@
  *                                                                        *
  **************************************************************************/
 
-
 #include "surfaces/normalsurface.h"
 #include "triangulation/dim3.h"
 
@@ -74,7 +73,33 @@ namespace regina {
     }
 
     bool NormalSurface::isEssentialTorus() const{
-        return false;
+        if (!(isConnected()
+              && isCompact()
+              && isOrientable()
+              && !hasRealBoundary()
+              && eulerChar() == 0))
+            return false;
+
+        Triangulation<3>* tri = cutAlong();
+        tri->intelligentSimplify();
+
+        if (tri->isConnected()){
+            delete tri;
+            return true;
+        }
+
+        tri->splitIntoComponents();
+        Triangulation<3>* L = static_cast<Triangulation<3>*>(tri->firstChild());
+        Triangulation<3>* R = static_cast<Triangulation<3>*>(L->nextSibling());
+
+        bool essential = !(L->hasCompressingDisc()
+                           || L->isTorusXInterval()
+                           || R->hasCompressingDisc()
+                           || R->isTorusXInterval());
+        delete L;
+        delete R;
+        delete tri;
+        return essential;
     }
 
     bool NormalSurface::isSolidTorusAnnulus() const{
