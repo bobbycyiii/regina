@@ -1470,7 +1470,7 @@ class REGINA_API NormalSurface : public ShortOutput<NormalSurface> {
 
         /**
          * Determines whether or not this surface is an annulus
-         * cutting along which yields two solid tori.
+         * cutting along which yields a union of one or two solid tori.
          * (This is easier to check than whether or not the annulus is essential.)
          *
          * \pre The underlying triangulation is connected.
