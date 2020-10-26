@@ -37,6 +37,8 @@
  *  no need for end users to include this header explicitly.
  */
 
+#include "surfaces/normalcoords.h"
+#include "surfaces/normalflags.h"
 #ifndef __TRIANGULATION3_H
 #ifndef __DOXYGEN
 #define __TRIANGULATION3_H
@@ -2229,6 +2231,21 @@ class REGINA_API Triangulation<3> :
          */
         bool knowsHaken() const;
 
+        /**
+         * Finds an essential surface of nonnegative Euler characteristic
+         * in the underlying 3-manifold if one exists.
+         *
+         * @return \c pointer to such a surface, or a null pointer if none exists.
+         */
+        NormalSurface* findFault(NormalCoords coords, NormalListFlags flags) const;
+        /**
+         * Is it already known whether or not the underlying 3-manifold
+         * admits an essential surface of nonnegative Euler characteristic?
+         *
+         * @return \c true if it is known, \c false otherwise.
+         */
+        bool knowsFault() const;
+        
         /**
          * Searches for a "simple" compressing disc inside this
          * triangulation.

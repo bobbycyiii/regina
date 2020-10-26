@@ -36,6 +36,8 @@
 #include "enumerate/treetraversal.h"
 #include "packet/container.h"
 #include "subcomplex/snappedball.h"
+#include "surfaces/normalcoords.h"
+#include "surfaces/normalflags.h"
 #include "surfaces/normalsurface.h"
 #include "surfaces/normalsurfaces.h"
 #include "triangulation/dim3.h"
@@ -1242,6 +1244,14 @@ bool Triangulation<3>::isHaken() const {
 
 bool Triangulation<3>::knowsHaken() const {
     return haken_.known();
+}
+
+NormalSurface* Triangulation<3>::findFault(NormalCoords coords, NormalListFlags flags) const {
+    return 0;
+}
+
+bool Triangulation<3>::knowsFault() const {
+    return false;
 }
 
 } // namespace regina

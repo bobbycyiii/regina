@@ -306,6 +306,8 @@ void addTriangulation3(pybind11::module& m) {
             &Triangulation<3>::hasSimpleCompressingDisc)
         .def("isHaken", &Triangulation<3>::isHaken)
         .def("knowsHaken", &Triangulation<3>::knowsHaken)
+        .def("findFault", &Triangulation<3>::findFault)
+        .def("knowsFault", &Triangulation<3>::knowsFault)
         .def("niceTreeDecomposition", &Triangulation<3>::niceTreeDecomposition,
             pybind11::return_value_policy::reference_internal)
         .def("makeDoubleCover", &Triangulation<3>::makeDoubleCover)
